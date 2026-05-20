@@ -510,34 +510,40 @@ function renderTable(data) {
     </tr>`;
   }).join('');
  
-  // Grafik
-  const labels = data.map(e => e.name);
-  const d1     = data.map(e => e.phase1);
-  const d2     = data.map(e => e.phase2);
-  const ctx    = document.getElementById('myChart');
+  // Grafik — zwei Balken: Ø Phase 1 vs Ø Phase 2
+  const ctx = document.getElementById('myChart');
   if (window._chart) window._chart.destroy();
   window._chart = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels,
-      datasets: [
-        { label: 'Phase 1', data: d1, backgroundColor: '#2e408099', borderRadius: 6 },
-        { label: 'Phase 2', data: d2, backgroundColor: '#e8a02099', borderRadius: 6 }
-      ]
+      labels: ['Ø Phase 1\n(vor Hilfestellung)', 'Ø Phase 2\n(nach Hilfestellung)'],
+      datasets: [{
+        data: [parseFloat(avg1), parseFloat(avg2)],
+        backgroundColor: ['#2e408099', '#e8a02099'],
+        borderColor:     ['#2e4080',   '#c4861a'],
+        borderWidth: 2,
+        borderRadius: 8,
+        barPercentage: 0.45
+      }]
     },
     options: {
       responsive: true,
       plugins: {
-        legend: { position: 'top' },
-        annotation: {}
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.raw} %`
+          }
+        }
       },
       scales: {
         y: {
           min: 0, max: 100,
-          title: { display: true, text: 'Schätzung (%)' },
-          afterDataLimits(scale) {
-            scale.max = 100;
-          }
+          title: { display: true, text: 'Durchschnittliche Schätzung (%)' },
+          ticks: { callback: v => v + ' %' }
+        },
+        x: {
+          ticks: { font: { size: 13 } }
         }
       }
     },
@@ -555,9 +561,23 @@ function renderTable(data) {
         ctx.setLineDash([6, 4]);
         ctx.stroke();
         ctx.fillStyle = '#d94f4f';
-        ctx.font = '11px DM Sans, system-ui';
-        ctx.fillText('Korrekter Wert: 15,4 %', right - 140, yPos - 6);
+        ctx.font = '11px system-ui';
+        ctx.fillText('Korrekter Wert: 15,4 %', right - 145, yPos - 6);
         ctx.restore();
+      }
+    }, {
+      id: 'valueLabels',
+      afterDatasetsDraw(chart) {
+        const { ctx, scales: { y } } = chart;
+        chart.data.datasets[0].data.forEach((val, i) => {
+          const bar = chart.getDatasetMeta(0).data[i];
+          ctx.save();
+          ctx.fillStyle = '#1a2744';
+          ctx.font = 'bold 15px system-ui';
+          ctx.textAlign = 'center';
+          ctx.fillText(val + ' %', bar.x, bar.y - 10);
+          ctx.restore();
+        });
       }
     }]
   });
