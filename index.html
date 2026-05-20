@@ -298,6 +298,8 @@
   </div>
   <p style="font-size:12px;color:var(--muted);margin-bottom:20px;text-align:right">Korrekter Wert: <strong style="color:var(--navy)">15,4 %</strong></p>
 
+  <canvas id="myChart" style="margin-bottom:24px;max-height:300px"></canvas>
+  
   <div class="table-wrap">
     <table>
       <thead>
@@ -355,13 +357,15 @@
 
 <!-- Firebase SDK -->
 <script type="module">
+import { Chart, registerables } from 'https://cdn.jsdelivr.net/npm/chart.js@4/+esm';
+Chart.register(...registerables);
 import { initializeApp }                          from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getFirestore, collection, addDoc,
          onSnapshot, query, orderBy,
          deleteDoc, doc, getDocs }                from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 // ════════════════════════════════════════════════════
-//  ▼▼▼  NUR DIESEN BLOCK MÜSSEN SIE ANPASSEN  ▼▼▼
+//  ▼▼▼  NUR DIESEN BLOCK ANPASSEN  ▼▼▼
 // ════════════════════════════════════════════════════
 
 const firebaseConfig = {
@@ -505,8 +509,60 @@ function renderTable(data) {
       <td style="color:var(--muted);font-size:12px">${e.timestamp}</td>
     </tr>`;
   }).join('');
+ 
+  // Grafik
+  const labels = data.map(e => e.name);
+  const d1     = data.map(e => e.phase1);
+  const d2     = data.map(e => e.phase2);
+  const ctx    = document.getElementById('myChart');
+  if (window._chart) window._chart.destroy();
+  window._chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Phase 1', data: d1, backgroundColor: '#2e408099', borderRadius: 6 },
+        { label: 'Phase 2', data: d2, backgroundColor: '#e8a02099', borderRadius: 6 }
+      ]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'top' },
+        annotation: {}
+      },
+      scales: {
+        y: {
+          min: 0, max: 100,
+          title: { display: true, text: 'Schätzung (%)' },
+          afterDataLimits(scale) {
+            scale.max = 100;
+          }
+        }
+      }
+    },
+    plugins: [{
+      id: 'correctLine',
+      afterDraw(chart) {
+        const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+        const yPos = y.getPixelForValue(15.4);
+        ctx.save();
+        ctx.beginPath();
+        ctx.moveTo(left, yPos);
+        ctx.lineTo(right, yPos);
+        ctx.strokeStyle = '#d94f4f';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.stroke();
+        ctx.fillStyle = '#d94f4f';
+        ctx.font = '11px DM Sans, system-ui';
+        ctx.fillText('Korrekter Wert: 15,4 %', right - 140, yPos - 6);
+        ctx.restore();
+      }
+    }]
+  });
 }
-
+ 
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
