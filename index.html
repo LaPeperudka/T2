@@ -177,7 +177,7 @@
 
 <!-- ① NAME -->
 <div class="card screen active" id="screenName">
-  <div class="card-eyebrow">Seminar-Experiment</div>
+  <div class="card-eyebrow">Urteilen & Entscheiden T2</div>
   <h1>Willkommen</h1>
   <p class="subtitle">Bitte geben Sie einen Namen oder ein Pseudonym ein, um zu beginnen.</p>
 
@@ -187,7 +187,7 @@
 
   <div class="field-wrap">
     <label for="inputName">Name oder Pseudonym</label>
-    <input type="text" id="inputName" placeholder="z. B. Teilnehmer_A" autocomplete="off">
+    <input type="text" id="inputName" placeholder="z. B. Max Mustermann" autocomplete="off">
     <div class="error-msg" id="nameError">Bitte geben Sie einen Namen ein.</div>
   </div>
   <button class="btn btn-primary" onclick="goToInstructions()">Weiter →</button>
@@ -199,8 +199,8 @@
   <h2>Was erwartet Sie?</h2>
   <ul class="instr-list">
     <li>Sie erhalten eine statistische Aufgabe und geben Ihre erste Einschätzung ab.</li>
-    <li>Danach erhalten Sie eine visuelle Hilfe und revidieren Ihre Schätzung.</li>
-    <li>Beide Antworten werden anonym gespeichert — es gibt kein Richtig oder Falsch.</li>
+    <li>Danach können Sie Ihre Schätzung revidieren.</li>
+    <li>Beide Antworten werden anonym gespeichert.</li>
   </ul>
   <button class="btn btn-primary" onclick="goToPhase1()">Aufgabe starten →</button>
 </div>
@@ -233,13 +233,12 @@
     <strong>Wie wahrscheinlich ist es in Prozent, dass sie tatsächlich erkrankt ist?</strong>
   </div>
   <div class="info-box">
-    <div class="box-title">Stell dir 10.000 Menschen vor</div>
+    <div class="box-title">Stellen Sie sich 10.000 Menschen vor</div>
     <ul>
       <li>100 sind erkrankt → <strong>90 testen positiv</strong></li>
       <li>9.900 sind gesund → <strong>495 testen positiv</strong></li>
       <li>Insgesamt: <strong>585 positive Tests</strong>, davon <strong>90 wirklich erkrankt</strong></li>
     </ul>
-    <div class="highlight">➜ 90 von 585 positiv Getesteten sind tatsächlich krank ≈ <strong>15,4 %</strong></div>
   </div>
   <div class="field-wrap">
     <label for="inputPhase2">Meine neue Schätzung</label>
@@ -268,7 +267,6 @@
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
     </div>
   </div>
-  <h2 style="text-align:center">Vielen Dank für Ihre Teilnahme.</h2>
   <p class="subtitle" style="text-align:center;margin-bottom:0">Sie können diese Seite jetzt schließen.</p>
 </div>
 
